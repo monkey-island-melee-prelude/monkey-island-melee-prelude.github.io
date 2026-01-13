@@ -1,0 +1,6 @@
+Loc,Obj,Tribute,Hint/Narration
+Docks,Get rope,MI1 arrival,"""Check SCUMM Bar next."""
+SCUMM Bar,Recruit suboptimal,Sad NPCs,"""These pirates need convincing."""
+Lookout,Spyglass view,MI2 scope,"""Higher ground?"""
+Grove,Rubber chicken,MI1 circus,"""Swing across?"""
+Docks (end),Board w/ pulley,Iconic escape,Auto-combine
