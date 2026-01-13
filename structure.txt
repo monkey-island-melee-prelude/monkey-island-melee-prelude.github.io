@@ -1,0 +1,16 @@
+/monkey-island-melee-prelude/
+├── README.md              # Setup: pip install pygame; python engine/game_manager.py
+├── requirements.txt       # pygame==2.5.2
+├── /engine/               # Locked 80%
+│   ├── game_manager.py   # Above prototype
+│   ├── verb_system.py    # Grid rendering
+│   └── puzzle_manager.py # JSON triggers
+├── /data/                 # Reusable JSON (20% flexible)
+│   ├── scenes.json       # Merged sample below
+│   ├── dialogues.json
+│   └── items.json
+├── /claude-design/        # Claude contribs
+├── /gemini-art/           # HTML mocks → PNG exports
+├── /chatgpt-consult/      # QA notes
+├── /grok-lead/            # This baseline + merges
+└── /working-state/        # Latest build + changelog.md
