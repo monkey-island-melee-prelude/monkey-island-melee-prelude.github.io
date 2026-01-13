@@ -1,0 +1,30 @@
+┌──────────────────────┐
+│ GAME MANAGER         │  (Main loop, state: gameplay/dialogue/inventory)
+│ (Pygame Window)      │
+└──────────┬───────────┘
+           │
+┌──────────▼──────────┐ ┌──────────┐
+│ SCENE MANAGER       │ │ HINT BOOK│  (Return-style, escalates)
+│ - JSON Rooms        │ │ (JSON)   │
+│ - Hotspots (3-5/room)│ └──────────┘
+│ - Transitions       │
+└──────────┬──────────┘
+           │
+┌──────────▼──────────┐
+│ INTERACTION RESOLVER│  (Verb + Object → Text/Puzzle/Dialogue)
+│ - Inventory Check   │
+│ - Exhausted Flags   │  (Grey out)
+│ - Paradox Glitches  │
+└──────────┬──────────┘
+           │
+┌──────────▼──────────┐ ┌──────────▼──────────┐
+│ VERB GRID (12)      │ │ INVENTORY MANAGER   │
+│ 9 Classic + 3 Twist │ │ - Drag/Drop Combos  │
+└─────────────────────┘ └─────────────────────┘
+           │                    │
+           └──────────┬─────────┘
+                      │
+                ┌─────▼─────┐
+                │ DIALOGUE  │  (2-3 branches, JSON trees)
+                │ TREE      │
+                └───────────┘
