@@ -1,0 +1,13 @@
+{
+  "melee_docks": {
+    "narration": "The docks are run-down...",
+    "hotspots": {
+      "rope_coil": {
+        "PICK UP": {"text": "Got rope!", "add_item": "rope"}
+      },
+      "seagull": {
+        "TALK TO": {"text": "Go to SCUMM Bar.", "hint": "scumm_bar"}
+      }
+    }
+  }
+}
