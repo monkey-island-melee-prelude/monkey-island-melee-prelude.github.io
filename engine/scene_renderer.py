@@ -130,3 +130,26 @@ def play_derez(screen):
         pygame.draw.rect(screen, (0, 0, 0), (0, 1024 - i, 1024, i))
         pygame.display.flip()
         pygame.time.delay(10)
+
+def draw_vector_cursor(screen, pos, selected_verb, game_time):
+    x, y = pos
+
+    # Base cursor pulse
+    pulse = 2 + int((math.sin(game_time * 0.01) + 1) * 1.5)
+
+    # Color logic
+    if selected_verb:
+        color = (255, 0, 255)  # MAGENTA when verb selected
+    else:
+        color = (0, 255, 255)  # CYAN default
+
+    # Crosshair
+    pygame.draw.line(screen, color, (x - 8, y), (x + 8, y), pulse)
+    pygame.draw.line(screen, color, (x, y - 8), (x, y + 8), pulse)
+
+    # Subtle orbiting dot for "future glitch" feel
+    angle = game_time * 0.01
+    ox = x + math.cos(angle) * 10
+    oy = y + math.sin(angle) * 10
+    pygame.draw.circle(screen, color, (int(ox), int(oy)), 2)
+
