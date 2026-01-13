@@ -1,12 +1,364 @@
 {
   "melee_docks": {
-    "narration": "The docks are run-down...",
+    "name": "Melee Island Docks",
+    "background": "docks_bg.png",
+    "narration": "The docks are even more run-down than I remember. The pier is cracked, the wood is rotting, and there's a suspicious absence of pirate ships. Also, why is everything flickering like a bad hologram?",
+    "music": "melee_theme_sad.ogg",
+    "exits": {
+      "north": "scumm_bar",
+      "east": "lookout_point"
+    },
     "hotspots": {
+      "weathered_sign": {
+        "rect": [100, 150, 200, 250],
+        "name": "Weathered Pier Sign",
+        "exhausted": false,
+        "interactions": {
+          "LOOK AT": {
+            "text": "Someone crossed out 'Island' and wrote 'Purgatory.' Accurate.",
+            "exhausted": true
+          },
+          "PICK UP": {
+            "text": "It's bolted down. Also, I don't need a sign."
+          }
+        }
+      },
       "rope_coil": {
-        "PICK UP": {"text": "Got rope!", "add_item": "rope"}
+        "rect": [250, 400, 350, 500],
+        "name": "Rope Coil",
+        "exhausted": false,
+        "interactions": {
+          "LOOK AT": {
+            "text": "Old ship rope. Looks sturdy enough. Probably."
+          },
+          "PICK UP": {
+            "text": "I already have seven ropes. But this one's different. It's... ropey-er.",
+            "add_item": "rope",
+            "exhausted": true
+          }
+        }
       },
       "seagull": {
-        "TALK TO": {"text": "Go to SCUMM Bar.", "hint": "scumm_bar"}
+        "rect": [500, 200, 580, 280],
+        "name": "Judgmental Seagull",
+        "exhausted": false,
+        "interactions": {
+          "LOOK AT": {
+            "text": "It's staring at me. Judging me. Classic seagull behavior."
+          },
+          "TALK TO": {
+            "text": "The seagull squawks something that sounds like 'Go to the SCUMM Bar, you idiot.'",
+            "hint": "scumm_bar",
+            "exhausted": true
+          },
+          "PICK UP": {
+            "text": "I'm not touching that thing. It looks diseased."
+          }
+        }
+      },
+      "vending_machine": {
+        "rect": [700, 300, 800, 500],
+        "name": "Broken Vending Machine",
+        "exhausted": false,
+        "tribute": "futuristic_glitch",
+        "interactions": {
+          "LOOK AT": {
+            "text": "It's from the future. Or a different game. ERROR 404: SNACKS NOT FOUND."
+          },
+          "HACK": {
+            "text": "I press random buttons. It dispenses a can labeled 'Grog 2.0 (Now with Quantum Foam!)' I'm not drinking that.",
+            "add_item": "grog_2.0",
+            "exhausted": true
+          },
+          "USE": {
+            "text": "It's out of order. Story of my life."
+          }
+        }
+      },
+      "rubber_chicken_spot": {
+        "rect": [400, 450, 500, 550],
+        "name": "Empty Dock Space",
+        "visible": false,
+        "unlocked_by": "has_rubber_chicken",
+        "interactions": {
+          "USE": {
+            "requires": ["rubber_chicken", "pulley", "rope"],
+            "text": "I combine the rubber chicken, pulley, and rope. Time to get off this island. Again.",
+            "trigger": "win_sequence"
+          }
+        }
+      }
+    }
+  },
+
+  "scumm_bar": {
+    "name": "SCUMM Bar",
+    "background": "scumm_bar_bg.png",
+    "narration": "The SCUMM Bar is quieter than usual. A few desperate-looking pirates nurse their drinks. The piano in the corner is missing keys. This place has seen better days.",
+    "music": "scumm_bar_sad.ogg",
+    "exits": {
+      "south": "melee_docks"
+    },
+    "hotspots": {
+      "bartender": {
+        "rect": [200, 200, 300, 400],
+        "name": "Weary Bartender",
+        "exhausted": false,
+        "interactions": {
+          "LOOK AT": {
+            "text": "He looks like he's been through several pirate invasions and a tax audit."
+          },
+          "TALK TO": {
+            "text": "What'll it be, Threepwood? The usual disappointment?",
+            "dialogue_tree": "bartender_initial"
+          }
+        }
+      },
+      "desperate_pirate_1": {
+        "rect": [400, 250, 500, 450],
+        "name": "Desperate Pirate (Grog Enthusiast)",
+        "exhausted": false,
+        "recruited": false,
+        "interactions": {
+          "LOOK AT": {
+            "text": "He's staring at an empty mug like it holds the secrets of the universe."
+          },
+          "TALK TO": {
+            "text": "You're Guybrush Threepwood? THE Guybrush Threepwood?",
+            "dialogue_tree": "pirate_1_recruit",
+            "exhausted": false
+          },
+          "GIVE": {
+            "requires": "grog_2.0",
+            "text": "He takes the Grog 2.0, drinks it, and immediately looks ill. 'I'm in. What's the worst that could happen?'",
+            "recruit": "pirate_1",
+            "exhausted": true
+          }
+        }
+      },
+      "desperate_pirate_2": {
+        "rect": [600, 250, 700, 450],
+        "name": "Desperate Pirate (Broke)",
+        "exhausted": false,
+        "recruited": false,
+        "interactions": {
+          "LOOK AT": {
+            "text": "She's counting invisible coins on the table."
+          },
+          "TALK TO": {
+            "text": "I need work. Any work. I'll settle for 'questionable work.'",
+            "dialogue_tree": "pirate_2_recruit"
+          },
+          "GIVE": {
+            "requires": "coin",
+            "text": "She pockets the coin. 'One coin? That's it? Fine. I'm desperate enough.'",
+            "recruit": "pirate_2",
+            "exhausted": true
+          }
+        }
+      },
+      "desperate_pirate_3": {
+        "rect": [750, 300, 850, 450],
+        "name": "Desperate Pirate (Bored)",
+        "exhausted": false,
+        "recruited": false,
+        "interactions": {
+          "LOOK AT": {
+            "text": "He's carving something into the table. It says 'HELP.'"
+          },
+          "TALK TO": {
+            "text": "I'm so bored I'd join a knitting circle at this point.",
+            "dialogue_tree": "pirate_3_recruit"
+          },
+          "BUREAUCRATIZE": {
+            "text": "I hand him a customs form. He reads it, laughs, and says 'You know what? This sounds more interesting than sitting here. I'm in.'",
+            "recruit": "pirate_3",
+            "exhausted": true
+          }
+        }
+      },
+      "piano": {
+        "rect": [100, 400, 200, 500],
+        "name": "Broken Piano",
+        "tribute": "MI1_piano",
+        "interactions": {
+          "LOOK AT": {
+            "text": "Half the keys are missing. The ones that remain are out of tune."
+          },
+          "USE": {
+            "text": "I play a few notes. It sounds like a cat being strangled by an accordion."
+          },
+          "PUSH": {
+            "text": "I find a coin wedged under the leg! Classic.",
+            "add_item": "coin",
+            "exhausted": true
+          }
+        }
+      }
+    }
+  },
+
+  "lookout_point": {
+    "name": "Lookout Point",
+    "background": "lookout_bg.png",
+    "narration": "The lookout point offers a sweeping view of the sea. Or it would, if there weren't so many crates blocking the view. Someone really needs to clean this place up.",
+    "music": "lookout_theme.ogg",
+    "exits": {
+      "west": "melee_docks",
+      "south": "low_tide_grove"
+    },
+    "hotspots": {
+      "crate": {
+        "rect": [300, 400, 450, 550],
+        "name": "Heavy Crate",
+        "moved": false,
+        "interactions": {
+          "LOOK AT": {
+            "text": "A big wooden crate. Says 'FRAGILE' on the side. Naturally, it's been kicked around."
+          },
+          "PUSH": {
+            "text": "I push the crate over to the cliff edge. Perfect climbing height.",
+            "state_change": "crate_moved",
+            "exhausted": true
+          },
+          "PICK UP": {
+            "text": "Are you kidding? I'm a pirate, not a bodybuilder."
+          }
+        }
+      },
+      "cliff_edge": {
+        "rect": [400, 100, 600, 300],
+        "name": "Cliff Edge",
+        "interactions": {
+          "LOOK AT": {
+            "text": "I need to get higher to see the ocean properly."
+          },
+          "CLIMB": {
+            "requires_state": "crate_moved",
+            "text": "I climb up on the crate. Much better view from here!",
+            "state_change": "on_cliff"
+          }
+        }
+      },
+      "spyglass": {
+        "rect": [500, 150, 600, 200],
+        "name": "Old Spyglass",
+        "visible_if": "on_cliff",
+        "tribute": "MI2_telescope",
+        "interactions": {
+          "LOOK AT": {
+            "text": "An old spyglass, left behind by some previous lookout."
+          },
+          "USE": {
+            "text": "I look through the spyglass. There's a ship out there! It's tiny. And listing to one side. And... is that held together with duct tape? Perfect.",
+            "state_change": "spotted_ship",
+            "exhausted": true
+          }
+        }
+      }
+    }
+  },
+
+  "low_tide_grove": {
+    "name": "Low-Tide Grove",
+    "background": "grove_bg.png",
+    "narration": "The grove is overgrown and slightly ominous. There's a gap in the path ahead—too wide to jump. At least, too wide for me to jump without looking ridiculous.",
+    "music": "grove_theme.ogg",
+    "tribute": "MI1_circus_forest",
+    "exits": {
+      "north": "lookout_point"
+    },
+    "hotspots": {
+      "tree_branch": {
+        "rect": [200, 100, 350, 250],
+        "name": "Sturdy Tree Branch",
+        "interactions": {
+          "LOOK AT": {
+            "text": "A thick branch hanging over the gap. Looks strong enough to hold a rope."
+          },
+          "USE": {
+            "requires": "rope",
+            "text": "I tie the rope to the branch. Now I just need to swing across like some kind of dashing, handsome pirate hero.",
+            "state_change": "rope_tied",
+            "exhausted": true
+          }
+        }
+      },
+      "gap": {
+        "rect": [350, 300, 600, 500],
+        "name": "Wide Gap",
+        "interactions": {
+          "LOOK AT": {
+            "text": "That's a long way down. I'm not jumping that."
+          },
+          "SWING": {
+            "requires_state": "rope_tied",
+            "text": "I grab the rope and swing across the gap! I land gracefully. Well, I land. Let's go with that.",
+            "state_change": "crossed_gap"
+          }
+        }
+      },
+      "rubber_chicken": {
+        "rect": [650, 350, 750, 450],
+        "name": "Rubber Chicken with Pulley",
+        "visible_if": "crossed_gap",
+        "tribute": "MI1_iconic_item",
+        "interactions": {
+          "LOOK AT": {
+            "text": "There it is. The rubber chicken with a pulley in the middle. My oldest friend. My most reliable tool. My... okay, it's weird that I'm this attached to poultry."
+          },
+          "PICK UP": {
+            "text": "Got it! Now to get back to the docks and finally leave this island.",
+            "add_item": "rubber_chicken",
+            "add_item": "pulley",
+            "state_change": "has_rubber_chicken",
+            "exhausted": true
+          }
+        }
+      }
+    }
+  },
+
+  "governors_mansion": {
+    "name": "Governor's Mansion (Abandoned)",
+    "background": "mansion_bg.png",
+    "narration": "The mansion is eerily quiet. Dust everywhere. No governor. Just... emptiness. And maybe a ghost or two.",
+    "music": "mansion_theme.ogg",
+    "tribute": "optional_easter_egg",
+    "optional": true,
+    "exits": {
+      "south": "melee_docks"
+    },
+    "hotspots": {
+      "portrait": {
+        "rect": [400, 150, 600, 400],
+        "name": "Mysterious Portrait",
+        "look_count": 0,
+        "tribute": "Morgan_LeFlay_reference",
+        "interactions": {
+          "LOOK AT": {
+            "text": "A portrait of... someone I don't recognize. But there's something familiar about the eyes.",
+            "increment": "look_count"
+          },
+          "LOOK AT_3": {
+            "requires": "look_count >= 3",
+            "text": "Wait. I look closer. Behind the frame, there's a note: 'Guybrush - you're late. Again. - M.' Morgan?!",
+            "add_item": "morgan_note",
+            "exhausted": true
+          }
+        }
+      },
+      "chandelier": {
+        "rect": [300, 50, 700, 150],
+        "name": "Dusty Chandelier",
+        "interactions": {
+          "LOOK AT": {
+            "text": "Covered in cobwebs. Hasn't been lit in years."
+          },
+          "PULL": {
+            "text": "I pull on the chandelier. Nothing happens. Of course."
+          }
+        }
       }
     }
   }
