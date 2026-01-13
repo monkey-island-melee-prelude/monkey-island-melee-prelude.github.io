@@ -1,8 +1,6 @@
-# engine/game_manager.py (v0.3.3 - Full merged version with all updates)
-
 import pygame
 import json
-import math  # For sin/cos in animations
+import math
 from enum import Enum
 
 class GameState(Enum):
@@ -31,7 +29,6 @@ class UIManager:
             self.verb_rects.append((pygame.Rect(x, y, 100, 30), verb))
 
     def get_verb_at(self, pos):
-        """Returns the verb string if clicked, else None."""
         for rect, verb in self.verb_rects:
             if rect.collidepoint(pos):
                 return verb
@@ -64,15 +61,15 @@ class GameManager:
     def __init__(self, width=1024, height=768):
         pygame.init()
         self.screen = pygame.display.set_mode((width, height))
-        pygame.display.set_caption("Melee Prelude v0.3.3")
+        pygame.display.set_caption("Melee Prelude v0.3.4")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font(None, 32)
         self.small_font = pygame.font.Font(None, 24)
         self.state = GameState.GAMEPLAY
         self.selected_verb = None
         self.inventory = []
-        self.game_flags = {}  # e.g., {"crate_moved": True}
-        self.narration_queue = []  # ChatGPT rec
+        self.game_flags = {}
+        self.narration_queue = []
         self.scenes = self.load_scenes('data/scenes.json')
         self.hints = self.load_hints('data/hints.json')
         self.dialogues = self.load_dialogues('data/dialogues.json')
@@ -82,11 +79,17 @@ class GameManager:
         self.running = True
         self.glitch_intensity = 0
         self.inventory_flash_time = 0
-        self.room_title_time = pygame.time.get_ticks()  # Initial title
+        self.inventory_scale_start = 0
+        self.last_item_added = -1
+        self.room_title_time = pygame.time.get_ticks()
         self.combine_anim_time = 0
         self.combine_pos = (0, 0)
         self.cursor_history = []
         self.debug_mode = True
+        self.bureaucratize_time = 0
+        self.bureaucratize_pos = (0, 0)
+        self.hover_text = ""
+        self.vignette_surf = None
         pygame.mouse.set_visible(False)  # Hide default cursor
 
     def load_scenes(self, filename):
@@ -125,8 +128,8 @@ class GameManager:
                 self.show_hint()
             if event.key == pygame.K_f1:
                 self.debug_mode = not self.debug_mode
-            if event.key == pygame.K_n:  # Stub next scene for testing
-                self.change_scene('scumm_bar')  # Cycle for demo
+            if event.key == pygame.K_n:  # Test scene change
+                self.change_scene('scumm_bar')
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
             if self.state == GameState.GAMEPLAY:
@@ -172,6 +175,8 @@ class GameManager:
         if 'add_item' in interaction:
             self.inventory.append(interaction['add_item'])
             self.inventory_flash_time = pygame.time.get_ticks()
+            self.inventory_scale_start = pygame.time.get_ticks()
+            self.last_item_added = len(self.inventory) - 1
             self.glitch_intensity = 15
             self.trigger_combine_effect()
         if 'exhausted' in interaction:
@@ -182,6 +187,9 @@ class GameManager:
             self.narrate(f"Recruited {obj}!")  # Stub
         if 'dialogue_tree' in interaction:
             self.run_dialogue(interaction['dialogue_tree'])
+        if verb == "BUREAUCRATIZE":
+            self.bureaucratize_time = pygame.time.get_ticks()
+            self.bureaucratize_pos = pygame.mouse.get_pos()
 
     def check_conditions(self, interaction):
         req = interaction.get('requires')
@@ -211,15 +219,14 @@ class GameManager:
         if not tree:
             self.narrate("Nothing to say.")
             return
-        self.state = GameState.DIALOGUE  # Temp lock
+        self.state = GameState.DIALOGUE
         node = tree.get('root')
         while node:
             self.narrate(node.get('text', ""))
             choices = node.get('choices', [])
-            # Stub: auto-pick first (expand in next round)
             if not choices:
                 break
-            choice = choices[0]
+            choice = choices[0]  # Auto-pick first for now
             self.narrate(choice.get('text', ""))
             if 'action' in choice:
                 self.handle_dialogue_action(choice['action'])
@@ -234,9 +241,6 @@ class GameManager:
             self.set_flag(f"crew_{crew}")
             self.narrate(f"{crew} joins your crew!")
 
-    def crew_count(self):
-        return sum(1 for k in self.game_flags if k.startswith("crew_") and self.game_flags[k])
-
     def exhausted_text(self, obj):
         defaults = {
             "DEFAULT": "Nothing new here.",
@@ -248,7 +252,7 @@ class GameManager:
         hints = self.hints.get(self.current_scene, ["No hints yet."])
         hint_index = self.game_flags.get(f"hint_{self.current_scene}", 0) % len(hints)
         self.narrate(hints[hint_index])
-        self.set_flag(f"hint_{self.current_scene}", hint_index + 1)  # Escalate
+        self.set_flag(f"hint_{self.current_scene}", hint_index + 1)
 
     def narrate(self, text):
         self.narration_queue.append(text)
@@ -259,6 +263,7 @@ class GameManager:
         play_derez(self.screen)
         self.current_scene = scene_id
         self.room_title_time = pygame.time.get_ticks()
+        self.narrate(f"Entered {scene_id.replace('_', ' ').title()}.")
 
     def trigger_combine_effect(self):
         self.combine_pos = pygame.mouse.get_pos()
@@ -269,34 +274,37 @@ class GameManager:
             game_time = pygame.time.get_ticks()
             mouse_pos = pygame.mouse.get_pos()
             self.screen.fill((0, 0, 0))
-            # 1. Background & Details
+            # Hover detection for label
+            hover_obj_key = self.get_hotspot_at(mouse_pos)
+            self.hover_text = ""
+            if hover_obj_key:
+                scene = self.scenes.get(self.current_scene, {})
+                self.hover_text = scene['hotspots'][hover_obj_key].get('name', "")
+            # 1. Background
             draw_scene_background(self.screen, self.current_scene, game_time)
-            # 2. Hotspots with Pulsing Feedback (only if debug on)
+            # 2. Hotspots (debug only)
             if self.debug_mode:
                 scene = self.scenes.get(self.current_scene, {})
                 for name, hs in scene.get('hotspots', {}).items():
-                    rect_data = hs.get('rect')
-                    if rect_data and not hs.get('exhausted'):
-                        draw_hotspot_feedback(self.screen, rect_data, mouse_pos, game_time)
+                    if not hs.get('exhausted'):
+                        draw_hotspot_feedback(self.screen, hs['rect'], mouse_pos, game_time)
             # 3. Guybrush
             draw_guybrush(self.screen, (512, 510), game_time)
-            # 4. Room Title Flash
+            # 4. Effects
+            draw_bureaucratize_particles(self.screen, self.bureaucratize_pos, self.bureaucratize_time, game_time)
+            draw_combine_spiral(self.screen, self.combine_pos, self.combine_anim_time, game_time)
+            draw_vignette(self.screen, self)
             draw_room_title(self.screen, self.current_scene, self.room_title_time, game_time, self.font)
             # 5. UI & Inventory
             self.ui.draw_verb_grid(mouse_pos, self.selected_verb)
-            draw_inventory_icons(self.screen, self.inventory)
-            # Inventory Flash (yellow overlay)
-            if game_time - self.inventory_flash_time < 1000:
-                flash_idx = (len(self.inventory) - 1) % 6
-                flash_rect = pygame.Rect(380 + flash_idx * 100, 590, 90, 40)
-                pygame.draw.rect(self.screen, (255, 255, 0), flash_rect, 3)
-            # 6. Effects & Cursor
+            self.ui.draw_inventory(self.inventory)
+            draw_inventory_icons_v2(self.screen, self.inventory, self.last_item_added, self.inventory_scale_start, game_time)
+            # 6. Cursor & Labels
             self.cursor_history.append(mouse_pos)
             if len(self.cursor_history) > 12: self.cursor_history.pop(0)
             draw_cursor_trail(self.screen, self.cursor_history)
-            draw_combine_spiral(self.screen, self.combine_pos, self.combine_anim_time, game_time)
-            self.ui.apply_glitch(self.glitch_intensity)
-            self.glitch_intensity = max(0, self.glitch_intensity - 1)
+            if self.hover_text:
+                draw_hover_label(self.screen, self.hover_text, mouse_pos, self.small_font)
             draw_vector_cursor(self.screen, mouse_pos, self.selected_verb, game_time)
             # 7. Narration
             for i, text in enumerate(self.narration_queue):
