@@ -3,6 +3,21 @@ import json
 import math
 from enum import Enum
 
+from engine.scene_renderer import (
+    draw_scene_background,
+    draw_guybrush,
+    draw_inventory_icons_v2,
+    draw_cursor_trail,
+    draw_combine_spiral,
+    draw_room_title,
+    draw_hotspot_feedback,
+    draw_hover_label,
+    draw_bureaucratize_particles,
+    draw_vignette,
+    play_derez,
+    draw_vector_cursor
+)
+
 class GameState(Enum):
     GAMEPLAY = 1
     DIALOGUE = 2
