@@ -16,7 +16,7 @@ def draw_scene_background(screen, room_id, game_time):
         pygame.draw.rect(screen, (50, 30, 10), (0, 400, 1024, 160))
         for i in range(10):
             pygame.draw.rect(screen, (255, 255, 255), (700 + i*12, 430, 10, 25))
-        for x in [200, 500]: # Tables
+        for x in [200, 500]:
             pygame.draw.rect(screen, (80, 50, 20), (x-60, 420, 120, 20))
 
     elif room_id == 'lookout_point':
@@ -50,18 +50,15 @@ def draw_guybrush(screen, pos, game_time):
     if is_glitching:
         pygame.draw.circle(screen, (0, 255, 255), (x, y-75+bob), 18, 1)
 
-def draw_inventory_icons(screen, items):
+def draw_inventory_icons_v2(screen, items, scale_idx, scale_time, current_time):
+    elapsed = current_time - scale_time
     for i, item in enumerate(items[:6]):
-        x = 380 + i * 100
-        y = 610
-        if item == "rope":
-            pygame.draw.circle(screen, (139, 69, 19), (x+20, y+10), 12, 2)
-        elif item == "rubber_chicken":
-            pygame.draw.ellipse(screen, (255, 255, 0), (x+10, y, 20, 30))
-            pygame.draw.circle(screen, (0, 255, 255), (x+20, y+15), 6, 1) # Pulley
-        elif item == "grog_2.0":
-            pygame.draw.rect(screen, (50, 200, 50), (x+12, y, 16, 28))
-            pygame.draw.line(screen, (255, 255, 255), (x + 15, y + 15), (x + 30, y + 15), 2)
+        scale = 1.0
+        if i == scale_idx and elapsed < 200:
+            scale = 1.0 + 0.2 * math.sin((elapsed / 200) * math.pi)
+        x, y = 380 + i * 100, 590
+        size = int(40 * scale)
+        pygame.draw.rect(screen, (0, 255, 255), (x - (size-40)//2, y - (size-40)//2, size, size), 2)
 
 def draw_cursor_trail(screen, history):
     for i, pos in enumerate(history):
@@ -100,6 +97,32 @@ def draw_hotspot_feedback(screen, rect_data, mouse_pos, game_time):
         pygame.draw.rect(screen, (255, 0, 255), r, pulse)
     else:
         pygame.draw.rect(screen, (0, 255, 255), r, 1)
+
+def draw_hover_label(screen, text, pos, font):
+    if not text: return
+    shadow = font.render(text, True, (0, 20, 20))
+    label = font.render(text, True, (0, 255, 255))
+    screen.blit(shadow, (pos[0] + 12, pos[1] + 12))
+    screen.blit(label, (pos[0] + 10, pos[1] + 10))
+
+def draw_bureaucratize_particles(screen, pos, start_time, current_time):
+    elapsed = current_time - start_time
+    if elapsed > 800: return
+    for i in range(8):
+        angle = (elapsed * 0.01) + (i * 0.8)
+        dist = 10 + (elapsed * 0.05)
+        px = pos[0] + math.cos(angle) * dist
+        py = pos[1] + math.sin(angle) * dist
+        pygame.draw.rect(screen, (200, 0, 0), (px, py, 8, 3))
+
+def draw_vignette(screen, manager):
+    if manager.vignette_surf is None:
+        w, h = screen.get_size()
+        manager.vignette_surf = pygame.Surface((w, h), pygame.SRCALPHA)
+        for i in range(0, 150, 5):
+            alpha = int((i / 150) * 80)
+            pygame.draw.rect(manager.vignette_surf, (0, 0, 0, alpha), (0,0,w,h), 150-i)
+    screen.blit(manager.vignette_surf, (0, 0))
 
 def play_derez(screen):
     for i in range(0, 512, 16):
