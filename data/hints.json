@@ -1,0 +1,27 @@
+{
+  "melee_docks": [
+    "The docks are quiet, but not empty. Someone or something might point the way forward.",
+    "The SCUMM Bar has always been where pirates gather — desperate ones especially.",
+    "Maybe picking things up instead of staring at them would help."
+  ],
+  "scumm_bar": [
+    "Pirates don’t work for free. Or for pride.",
+    "Some problems can be solved with grog. Others with paperwork.",
+    "If someone looks bored enough, bureaucracy might be exciting."
+  ],
+  "lookout_point": [
+    "A better view often requires rearranging the environment.",
+    "Crates are rarely where they should be.",
+    "Seeing farther might reveal more than scenery."
+  ],
+  "low_tide_grove": [
+    "That gap isn’t meant to be jumped.",
+    "Rope has solved many of my problems. This might be another.",
+    "Swinging is safer when properly prepared."
+  ],
+  "governors_mansion": [
+    "Some secrets reveal themselves only after patience.",
+    "Looking again can matter.",
+    "Not every mystery is required — but some are rewarding."
+  ]
+}
