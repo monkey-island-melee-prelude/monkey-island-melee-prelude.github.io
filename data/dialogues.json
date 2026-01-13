@@ -1,0 +1,128 @@
+{
+  "bartender_initial": {
+    "root": {
+      "text": "What'll it be, Threepwood? The usual disappointment?",
+      "choices": [
+        {
+          "text": "1. Just information. Seen any pirate ships around?",
+          "response": "Ships? Around HERE? Not since the economy tanked. Try the docks. Or the bottom of the ocean.",
+          "end": true
+        },
+        {
+          "text": "2. I'll take a grog. The strongest you've got.",
+          "response": "We're out of the strong stuff. All I've got is 'Grog Classic' and something called 'Grog 2.0.' I don't trust the 2.0.",
+          "end": true
+        },
+        {
+          "text": "3. Never mind. This place is depressing.",
+          "response": "Tell me about it. I'm living it.",
+          "end": true
+        }
+      ]
+    }
+  },
+
+  "pirate_1_recruit": {
+    "root": {
+      "text": "You're Guybrush Threepwood? THE Guybrush Threepwood?",
+      "choices": [
+        {
+          "text": "1. That's me! Mighty pirate, destroyer of LeChuck—",
+          "response": "Yeah, yeah. Look, I need a job. I'll work for grog. You got grog?",
+          "next": "pirate_1_negotiate"
+        },
+        {
+          "text": "2. Depends. Who's asking?",
+          "response": "Someone who's desperate enough to sail with you. That answer your question?",
+          "next": "pirate_1_negotiate"
+        }
+      ]
+    },
+    "pirate_1_negotiate": {
+      "text": "So? You got grog or not?",
+      "choices": [
+        {
+          "text": "1. I'll get you some grog. (Give Grog 2.0)",
+          "requires": "grog_2.0",
+          "response": "Alright! Let's do this!",
+          "action": "recruit_pirate_1",
+          "end": true
+        },
+        {
+          "text": "2. Not yet. I'll be back.",
+          "response": "Fine. I'll be here. Staring at my empty mug. Like always.",
+          "end": true
+        }
+      ]
+    }
+  },
+
+  "pirate_2_recruit": {
+    "root": {
+      "text": "I need work. Any work. I'll settle for 'questionable work.'",
+      "choices": [
+        {
+          "text": "1. How about joining my crew? We're sailing soon.",
+          "response": "Your crew? What's the pay?",
+          "next": "pirate_2_pay"
+        },
+        {
+          "text": "2. Define 'questionable.'",
+          "response": "Anything that doesn't involve forms, taxes, or explaining myself to authorities.",
+          "end": true
+        }
+      ]
+    },
+    "pirate_2_pay": {
+      "text": "So what's the pay situation?",
+      "choices": [
+        {
+          "text": "1. How about this coin? (Give coin)",
+          "requires": "coin",
+          "response": "One coin? That's it? ...Fine. I'm desperate enough.",
+          "action": "recruit_pirate_2",
+          "end": true
+        },
+        {
+          "text": "2. We'll split the treasure. Eventually.",
+          "response": "Eventually? Pass. Come back when you have actual currency.",
+          "end": true
+        }
+      ]
+    }
+  },
+
+  "pirate_3_recruit": {
+    "root": {
+      "text": "I'm so bored I'd join a knitting circle at this point.",
+      "choices": [
+        {
+          "text": "1. How about a pirate crew instead?",
+          "response": "Pirate crew? On what ship? With what crew? With... okay, I'm listening.",
+          "next": "pirate_3_convince"
+        },
+        {
+          "text": "2. I could teach you to knit. I know a guy.",
+          "response": "...I'm going to pretend you didn't say that.",
+          "end": true
+        }
+      ]
+    },
+    "pirate_3_convince": {
+      "text": "Alright, convince me. Why should I join YOUR crew?",
+      "choices": [
+        {
+          "text": "1. Because I'm Guybrush Threepwood, mighty pirate!",
+          "response": "That's not as convincing as you think it is.",
+          "end": true
+        },
+        {
+          "text": "2. Here, fill out this customs form. (BUREAUCRATIZE)",
+          "response": "A customs form? This is... actually kind of fascinating in a horrible way. You know what? I'm in.",
+          "action": "recruit_pirate_3",
+          "end": true
+        }
+      ]
+    }
+  }
+}
